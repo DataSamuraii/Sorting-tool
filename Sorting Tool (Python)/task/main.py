@@ -86,6 +86,10 @@ def main() -> None:
             input_generator = get_input_lines(data_type, file_obj)
             for data in input_generator:
                 input_list.extend(process_func(el) for el in data if process_func(el) is not None)
+    else:
+        input_generator = get_input_lines(data_type)
+        for data in input_generator:
+            input_list.extend(process_func(el) for el in data if process_func(el) is not None)
 
     if args.sortingType == 'byCount':
         counted_input_list = sorted(Counter(input_list).items(), key=lambda x: (x[1], x[0]))
