@@ -36,6 +36,17 @@ def get_input(data_type: str, file_obj: Optional[TextIO] = None) -> List[str]:
     return line.split() if data_type in ['long', 'word'] else [line]
 
 
+def get_input_lines(data_type: str, file_obj: Optional[TextIO] = None):
+    while True:
+        try:
+            data = get_input(data_type, file_obj)
+            if not data:
+                break
+            yield data
+        except EOFError:
+            break
+
+
 def process_num(num: str) -> Optional[int]:
     try:
         return int(num)
@@ -72,18 +83,9 @@ def main() -> None:
 
     if args.inputFile:
         with args.inputFile as file_obj:
-            while True:
-                data = get_input(data_type, file_obj)
-                if not data:
-                    break
+            input_generator = get_input_lines(data_type, file_obj)
+            for data in input_generator:
                 input_list.extend(process_func(el) for el in data if process_func(el) is not None)
-    else:
-        while True:
-            try:
-                data = get_input(data_type)
-                input_list.extend(process_func(el) for el in data if process_func(el) is not None)
-            except EOFError:
-                break
 
     if args.sortingType == 'byCount':
         counted_input_list = sorted(Counter(input_list).items(), key=lambda x: (x[1], x[0]))
